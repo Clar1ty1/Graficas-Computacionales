@@ -107,7 +107,7 @@ def planoText():
     # activate textures
     glEnable(GL_TEXTURE_2D)
     if os.name == "posix":
-        glBindTexture(GL_TEXTURE_2D, textures[10])
+        glBindTexture(GL_TEXTURE_2D, textures[2])
     else:
         glBindTexture(GL_TEXTURE_2D, textures[12])
         
@@ -176,8 +176,12 @@ def display():
     # glVertex3d(Settings.DimBoard, 0, Settings.DimBoard)
     # glVertex3d(Settings.DimBoard, 0, -Settings.DimBoard)
     # glEnd()
-
-    maquinaria = Edificio(textures = textures, position=[10,2,-22], scale=5, txtIndex=6)
+    txtIndex = 0
+    if os.name == "posix":
+        txtIndex = 2
+    else:
+        txtIndex = 6
+    maquinaria = Edificio(textures = textures, position=[10,2,-22], scale=5, txtIndex=txtIndex)
 
      #Right face 
     maquinaria.setFace1Width(3.6)
@@ -205,7 +209,12 @@ def display():
 
     maquinaria.draw()
 
-    hibrido = Edificio(textures = textures, position=[3,2,-10], scale=5, txtIndex=4)
+    txtIndex = 0
+    if os.name == "posix":
+        txtIndex = 2
+    else:
+        txtIndex = 4
+    hibrido = Edificio(textures = textures, position=[3,2,-10], scale=5, txtIndex=txtIndex)
     
     #Right face
     hibrido.setFace1Width(5.7)
@@ -234,6 +243,11 @@ def display():
     
     hibrido.draw()
 
+    txtIndex = 0
+    if os.name == "posix":
+        txtIndex = 2
+    else:
+        txtIndex = 6
     area_de_seleccion = Edificio(textures = textures, position=[38.5,4,-45], scale=5, txtIndex=0)
     
     #Right face
