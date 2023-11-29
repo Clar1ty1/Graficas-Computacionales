@@ -1,6 +1,6 @@
-import yaml, pygame, random, glob, math
+import yaml, pygame, random, glob, math, numpy
 from Lifter import Lifter
-from Basura import Basura
+from Bolsa import Bolsa
 from Edificio import Edificio
 
 from pygame.locals import *
@@ -10,7 +10,7 @@ from OpenGL.GLUT import *
 
 textures = [];
 lifters = [];
-basuras = [];
+bolsas = [];
 delta = 0;
 
 def loadSettingsYAML(File):
@@ -43,11 +43,10 @@ def Texturas(filepath):
     glGenerateMipmap(GL_TEXTURE_2D)
     
 def Init(Options):
-    global textures, basuras, lifters
+    global textures, bolsas, lifters
     screen = pygame.display.set_mode( (Settings.screen_width, Settings.screen_height), DOUBLEBUF | OPENGL)
-    pygame.display.set_caption("OpenGL: cubos")
+    pygame.display.set_caption("OpenGL: Simulacion")
     
-
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
     gluPerspective(Settings.FOVY, Settings.screen_width/Settings.screen_height, Settings.ZNEAR, Settings.ZFAR)
@@ -68,18 +67,6 @@ def Init(Options):
     glEnable(GL_DEPTH_TEST)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
-    glPushMatrix()
-    glTranslate(100, 0.5, 100)
-    glColor3f(1.0, 0.5, 0.0)  # Color: Naranja
-    glBegin(GL_QUADS)
-    glVertex3d(-1, 0.5, -1)
-    glVertex3d(-1, 0.5, 1)
-    glVertex3d(1, 0.5, 1)
-    glVertex3d(1, 0.5, -1)
- 
-    glEnd()
-    glPopMatrix()
-    glClearColor(0,0,0,0)
     
     for File in glob.glob(Settings.Materials + "*.*"):
         Texturas(File)
@@ -88,19 +75,13 @@ def Init(Options):
         [-220,4,300],
         [-220,4,280],
         [-220,4,260]
-    ]
-    
-    NodosCarga = 10 * [[60,0,60]]   
-    
-    
+    ]    
     
     for i, p in enumerate(Positions):
         # i es el identificator del agente
         lifters.append(Lifter(Settings.DimBoard, 0.7, textures, i, p, 0))
     
-    for i, n in enumerate(NodosCarga):
-        # i es el identificador de la carga: sirve para realizar el inventario
-        basuras.append(Basura(Settings.DimBoard,1,textures,3, i, n))
+
 
           
 def planoText():
@@ -129,53 +110,24 @@ def planoText():
 
 def checkCollisions():
     for c in lifters:
-        for b in basuras:
+        for b in bolsas:
             distance = math.sqrt(math.pow((b.Position[0] - c.Position[0]), 2) + math.pow((b.Position[2] - c.Position[2]), 2))
             if distance <= c.radiusCol:
                 if c.status == "searching" and b.alive:
-                    b.alive = False
-                    c.status = "lifting"
-                #print("Colision detectada")
+                    bolsas.pop()
+                    c.status = "searching"
 
 def display():
-    global lifters, basuras, delta
+    global lifters, bolsas, delta
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     
-    #Se dibuja cubos
-    for obj in lifters:
-        obj.draw()
-        obj.update(delta)
+    #Draw the lifters
+    for lifter in lifters:
+        lifter.draw()
+        lifter.update(delta)
 
-    # Se dibuja el incinerador
-    glColor3f(1.0, 0.5, 0.0)  # Color: Naranja
-    square_size = 20.0  # Tamaño
-
-    half_size = square_size / 2.0
-    glBegin(GL_QUADS)
-    glVertex3d(-half_size, 0.5, -half_size)
-    glVertex3d(-half_size, 0.5, half_size)
-    glVertex3d(half_size, 0.5, half_size)
-    glVertex3d(half_size, 0.5, -half_size)
-    glEnd()
-    glClearColor(0,0,0,0)
-
-    #Se dibujan basuras
-    for obj in basuras:
-        obj.draw()
-        #obj.update()    
-    #Axis()
-
-    #Se dibuja el plano gris
+    #Draw the map
     planoText()
-
-    
-    # glColor3f(0.0, 0.0, 0.0)
-    # glBegin(GL_QUADS)
-    # glVertex3d(-Settings.DimBoard, 0, -Settings.DimBoard)
-    # glVertex3d(-Settings.DimBoard, 0, Settings.DimBoard)
-    # glVertex3d(Settings.DimBoard, 0, Settings.DimBoard)
-    # glVertex3d(Settings.DimBoard, 0, -Settings.DimBoard)
-    # glEnd()
     txtIndex = 0
     if os.name == "posix":
         txtIndex = 9
@@ -254,9 +206,6 @@ def display():
     area_de_seleccion.setFace1DistanceFromOrigin(21)
 
     # Front face
-    #area_de_seleccion.setFace2Width(0)
-    #area_de_seleccion.setFace2Heigth(0)
-    #area_de_seleccion.setFace2DistanceFromOrigin(15)
     area_de_seleccion.setFace2Width(21.5)
     area_de_seleccion.setFace2Heigth(5)
     area_de_seleccion.setFace2DistanceFromOrigin(15)
@@ -586,9 +535,6 @@ def display():
     
     tarimas.draw()
 
-
-
-    
 def lookAt(theta, pos):
     glLoadIdentity()
     rad = theta * math.pi / 180
@@ -607,55 +553,16 @@ def lookAt(theta, pos):
         Settings.UP_Z
     )	
 
-    
-
-def moveUp(theta, pos):
-    glLoadIdentity()
-    rad = theta * math.pi / 180
-    newX = Settings.EYE_X * math.cos(rad) + Settings.EYE_Z * math.sin(rad) + pos
-    newZ = -Settings.EYE_X * math.sin(rad) + Settings.EYE_Z * math.cos(rad) + pos
-
-    # Settings.EYE_X = Settings.EYE_X + 1
-    # Settings.EYE_Z = Settings.EYE_Z + 1
-    gluLookAt(
-        newX,
-        Settings.EYE_Y,
-        newZ,
-        Settings.CENTER_X,
-        Settings.CENTER_Y,
-        Settings.CENTER_Z,
-        Settings.UP_X,
-        Settings.UP_Y,
-        Settings.UP_Z
-    )
-
-
-def moveDown(theta, pos):
-    glLoadIdentity()
-
-    rad = theta * math.pi / 180
-    newX = Settings.EYE_X * math.cos(rad) + Settings.EYE_Z * math.sin(rad) + pos
-    newZ = -Settings.EYE_X * math.sin(rad) + Settings.EYE_Z * math.cos(rad) + pos
-    gluLookAt(
-        newX,
-        Settings.EYE_Y,
-        newZ,
-        Settings.CENTER_X,
-        Settings.CENTER_Y,
-        Settings.CENTER_Z,
-        Settings.UP_X,
-        Settings.UP_Y,
-        Settings.UP_Z
-    )
-    
 def Simulacion(Options):
 	# Variables para el control del observador
     global delta;
+    global bolsas
     theta = 0
     pos = 0
     radius = Options.radious
     delta = Options.Delta
     Init(Options);
+
     while True:
         keys = pygame.key.get_pressed()  # Checking pressed keys
         for event in pygame.event.get():
@@ -680,23 +587,19 @@ def Simulacion(Options):
        
             lookAt(theta, pos)
 
-        # if keys[pygame.K_UP]:
-        #     pos -= 5.0
-        #     moveUp(theta, pos)
-       
-        
-        # if keys[pygame.K_DOWN]:
-        #     pos += 5.0
-        #     moveDown(theta, pos)
- 
- 
-        
-        
+            
         display()
+        probability = 0.0015
+        if numpy.random.rand(1)[0] < probability:
+            bolsa = Bolsa([-260, 4, 233], textures, 1)
+            bolsas.append(bolsa)
+        for bolsa in bolsas:
+            bolsa.draw()
+        checkCollisions()
+        print(len(bolsas))
         pygame.display.flip()
         pygame.time.wait(5)
 
-    #
 
 
 
