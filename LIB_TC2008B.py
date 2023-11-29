@@ -178,7 +178,7 @@ def display():
     # glEnd()
     txtIndex = 0
     if os.name == "posix":
-        txtIndex = 2
+        txtIndex = 9
     else:
         txtIndex = 6
     maquinaria = Edificio(textures = textures, position=[10,2,-22], scale=5, txtIndex=txtIndex)
@@ -209,9 +209,8 @@ def display():
 
     maquinaria.draw()
 
-    txtIndex = 0
     if os.name == "posix":
-        txtIndex = 2
+        txtIndex = 11
     else:
         txtIndex = 4
     hibrido = Edificio(textures = textures, position=[3,2,-10], scale=5, txtIndex=txtIndex)
@@ -243,12 +242,11 @@ def display():
     
     hibrido.draw()
 
-    txtIndex = 0
     if os.name == "posix":
-        txtIndex = 2
+        txtIndex = 5
     else:
-        txtIndex = 6
-    area_de_seleccion = Edificio(textures = textures, position=[38.5,4,-45], scale=5, txtIndex=0)
+        txtIndex = 0
+    area_de_seleccion = Edificio(textures = textures, position=[38.5,4,-45], scale=5, txtIndex=txtIndex)
     
     #Right face
     area_de_seleccion.setFace1Width(15)
@@ -280,7 +278,11 @@ def display():
     
     area_de_seleccion.draw()
 
-    zona1 = Edificio(textures = textures, position=[12.5,0,5], scale=4, txtIndex=3)
+    if os.name == "posix":
+        txtIndex = 0
+    else:
+        txtIndex = 3
+    zona1 = Edificio(textures = textures, position=[12.5,0,5], scale=4, txtIndex=txtIndex)
     
     #Right face
     zona1.setFace1Width(38.4)
@@ -309,7 +311,11 @@ def display():
     
     zona1.draw()
 
-    zona2 = Edificio(textures = textures, position=[55,0,10], scale=4, txtIndex=3)
+    if os.name == "posix":
+        txtIndex = 0
+    else:
+        txtIndex = 3
+    zona2 = Edificio(textures = textures, position=[55,0,10], scale=4, txtIndex=txtIndex)
     
     #Right face
     zona2.setFace1Width(38.4)
@@ -338,8 +344,11 @@ def display():
     
     zona2.draw()
     #checkCollisions()
-
-    hibridoTwo = Edificio(textures = textures, position=[3,2,13], scale=5, txtIndex=4)
+    if os.name == "posix":
+        txtIndex = 11
+    else:
+        txtIndex = 4
+    hibridoTwo = Edificio(textures = textures, position=[3,2,13], scale=5, txtIndex=txtIndex)
     #Right face
     hibridoTwo.setFace1Width(13.2)
     hibridoTwo.setFace1Heigth(5)
@@ -367,7 +376,11 @@ def display():
 
     hibridoTwo.draw()
 
-    hibridoThree = Edificio(textures = textures, position=[14.7,2,-10], scale=5, txtIndex=4)
+    if os.name == "posix":
+        txtIndex = 11
+    else:
+        txtIndex = 4
+    hibridoThree = Edificio(textures = textures, position=[14.7,2,-10], scale=5, txtIndex=txtIndex)
     
     #Right face
     hibridoThree.setFace1Width(5.7)
@@ -398,7 +411,11 @@ def display():
     
     hibridoThree.draw()
 
-    hibridoThreeHelper = Edificio(textures = textures, position=[20,2,-12.7], scale=5, txtIndex=4)
+    if os.name == "posix":
+        txtIndex = 11
+    else:
+        txtIndex = 4
+    hibridoThreeHelper = Edificio(textures = textures, position=[20,2,-12.7], scale=5, txtIndex=txtIndex)
     
     #Right face
     hibridoThreeHelper.setFace1Width(3)
@@ -429,7 +446,11 @@ def display():
     
     hibridoThreeHelper.draw()
 
-    polipropeno = Edificio(textures = textures, position=[17.3,2,4.5], scale=5, txtIndex=8)
+    if os.name == "posix":
+        txtIndex = 10
+    else:
+        txtIndex = 8
+    polipropeno = Edificio(textures = textures, position=[17.3,2,4.5], scale=5, txtIndex=txtIndex)
     
     #Right face
     polipropeno.setFace1Width(4.5)
@@ -460,8 +481,11 @@ def display():
     
     polipropeno.draw()
 
-
-    bultosListos = Edificio(textures = textures, position=[17.3,2,20.7], scale=5, txtIndex=2)
+    if os.name == "posix":
+        txtIndex = 1
+    else:
+        txtIndex = 2
+    bultosListos = Edificio(textures = textures, position=[17.3,2,20.7], scale=5, txtIndex=txtIndex)
     
     #Right face
     bultosListos.setFace1Width(6.4)
@@ -492,8 +516,11 @@ def display():
     
     bultosListos.draw()
 
-
-    oficina = Edificio(textures = textures, position=[17.3,2,32.2], scale=5, txtIndex=7)
+    if os.name == "posix":
+        txtIndex = 3
+    else:
+        txtIndex = 7
+    oficina = Edificio(textures = textures, position=[17.3,2,32.2], scale=5, txtIndex=txtIndex)
     
     #Right face
     oficina.setFace1Width(2.2)
@@ -524,7 +551,11 @@ def display():
     
     oficina.draw()
 
-    tarimas = Edificio(textures = textures, position=[3,2,32.2], scale=5, txtIndex=9)
+    if os.name == "posix":
+        txtIndex = 12
+    else:
+        txtIndex = 9
+    tarimas = Edificio(textures = textures, position=[3,2,32.2], scale=5, txtIndex=txtIndex)
     
     #Right face
     tarimas.setFace1Width(2.2)
