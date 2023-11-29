@@ -1,23 +1,28 @@
-import pygame, random, math, numpy
+import pygame, random, math, numpy, yaml
 from pygame.locals import *
 from Cubo import Cubo
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-NodosVisita = numpy.asarray( [
-    #[0,0,0], # descarga de plastico
-    [-220,0,250], # nodo carga
-    [-220,0,190], # nodo carga
-    [50,0,190], # nodo carga
-    [50,0,0], # nodo carga
-    [0,0,0],
-    [50,0,0], # nodo carga
-    [50,0,190], # nodo carga
-    [-220,0,190], # nodo carga
-    [-220,0,250], # nodo carga
-# nodo donde esta la carga
-], dtype = numpy.float64 )
+# Cargar las coordenadas desde el archivo YAML
+with open('Nodos.yaml', 'r') as file:
+    nodos_yaml = yaml.safe_load(file)
+
+tupla = []
+coordenadas_original = []
+for nodos in nodos_yaml:
+    if nodos[0] == '(':
+        tupla.append(nodos[1:])
+    size = len(nodos)
+    if nodos[size-1] == ')':
+        tupla.append(nodos[:-1])
+        coordenadas_original.append(tupla)
+        tupla = []
+
+coordenadas_modificadas = [[float(x), 2.0, float(y)] for [x, y] in coordenadas_original]
+NodosVisita = numpy.asarray(coordenadas_modificadas, dtype=numpy.float64)
+print(NodosVisita)
 
 A = numpy.zeros((3,3))
 
