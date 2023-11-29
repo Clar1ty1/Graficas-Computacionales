@@ -24,29 +24,7 @@ def loadSettingsYAML(File):
 
 
 Settings = loadSettingsYAML("Settings.yaml");	
-	
-def Axis():
-    glShadeModel(GL_FLAT)
-    glLineWidth(3.0)
-    #X axis in red
-    glColor3f(1.0,0.0,0.0)
-    glBegin(GL_LINES)
-    glVertex3f(X_MIN,0.0,0.0)
-    glVertex3f(X_MAX,0.0,0.0)
-    glEnd()
-    #Y axis in green
-    glColor3f(0.0,1.0,0.0)
-    glBegin(GL_LINES)
-    glVertex3f(0.0,Y_MIN,0.0)
-    glVertex3f(0.0,Y_MAX,0.0)
-    glEnd()
-    #Z axis in blue
-    glColor3f(0.0,0.0,1.0)
-    glBegin(GL_LINES)
-    glVertex3f(0.0,0.0,Z_MIN)
-    glVertex3f(0.0,0.0,Z_MAX)
-    glEnd()
-    glLineWidth(1.0)
+
 
 def Texturas(filepath):
     # Arreglo para el manejo de texturas

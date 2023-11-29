@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import os
 
 # Lista para almacenar los nodos con sus coordenadas
 nodes = []
@@ -84,9 +85,12 @@ def handle_user_input():
 
     return "continue"
 
-def main(Options):
+def main(Options = ""):
     global img, nodes
-    img_path = 'Materials\\zPlano.jpeg'
+    if os.name == "posix":
+        img_path = "Materials/zPlano.jpeg"
+    else:
+        img_path = 'Materials\\zPlano.jpeg'
 
     img = cv2.imread(img_path, 1)
 
