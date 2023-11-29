@@ -174,7 +174,7 @@ class Lifter:
         if os.name == "posix":
             glBindTexture(GL_TEXTURE_2D, self.textures[7])
         else:
-            glBindTexture(GL_TEXTURE_2D, self.textures[9])
+            glBindTexture(GL_TEXTURE_2D, self.textures[10])
 
         glBegin(GL_QUADS)
         glTexCoord2f(0.0, 0.0)

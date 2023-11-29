@@ -109,7 +109,7 @@ def planoText():
     if os.name == "posix":
         glBindTexture(GL_TEXTURE_2D, textures[10])
     else:
-        glBindTexture(GL_TEXTURE_2D, textures[11])
+        glBindTexture(GL_TEXTURE_2D, textures[12])
         
     glBegin(GL_QUADS)
     glTexCoord2f(0.0, 0.0)
