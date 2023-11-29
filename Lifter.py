@@ -4,6 +4,7 @@ from Cubo import Cubo
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
+import os
 
 # Cargar las coordenadas desde el archivo YAML
 with open('Nodos.yaml', 'r') as file:
@@ -170,7 +171,11 @@ class Lifter:
         glColor3f(1.0, 1.0, 1.0)
         # front face
         glEnable(GL_TEXTURE_2D)
-        glBindTexture(GL_TEXTURE_2D, self.textures[5])
+        if os.name == "posix":
+            glBindTexture(GL_TEXTURE_2D, self.textures[7])
+        else:
+            glBindTexture(GL_TEXTURE_2D, self.textures[9])
+
         glBegin(GL_QUADS)
         glTexCoord2f(0.0, 0.0)
         glVertex3d(1, 1, 1)
@@ -235,7 +240,10 @@ class Lifter:
 
         # Wheels
         glEnable(GL_TEXTURE_2D)
-        glBindTexture(GL_TEXTURE_2D, self.textures[6])
+        if os.name == "posix":
+            glBindTexture(GL_TEXTURE_2D, self.textures[8])
+        else:
+            glBindTexture(GL_TEXTURE_2D, self.textures[6])
         glPushMatrix()
         glTranslatef(-1.2, -1, 1)
         glScaled(0.3, 0.3, 0.3)
