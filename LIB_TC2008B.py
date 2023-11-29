@@ -528,7 +528,7 @@ def display():
     
     oficina.draw()
 
-    tarimas = Edificio(textures = textures, position=[3,2,32.2], scale=5, txtIndex=7)
+    tarimas = Edificio(textures = textures, position=[3,2,32.2], scale=5, txtIndex=9)
     
     #Right face
     tarimas.setFace1Width(2.2)
