@@ -1,4 +1,4 @@
-import yaml, pygame, random, glob, math, numpy
+import yaml, pygame, random, glob, math, numpy, pandas, time
 from Lifter import Lifter
 from Bolsa import Bolsa
 from Edificio import Edificio
@@ -75,14 +75,16 @@ def Init(Options):
         Texturas(File)
 
     Positions = [
-        [-220,4,300],
+        [-220,4,260],
         [-220,4,280],
-        [-220,4,260]
+        [-220,4,300],
+        [-220,4,320],
+        [-220,4,340],
     ]    
-    
+    start = time.time()
     for i in range(0, Options.lifters):
         # i es el identificator del agente
-        lifters.append(Lifter(Settings.DimBoard, 0.7, textures, i,  0, lifters))
+        lifters.append(Lifter(Settings.DimBoard, 0.7, textures, i, Positions[i],  0, lifters, start))
     
 
 
@@ -590,7 +592,17 @@ def Simulacion(Options):
     radius = Options.radious
     delta = Options.Delta
     Init(Options);
-
+    cleanFile = open('Report.csv', 'w')
+    cleanFile.close()
+    csv = open('Report.csv', 'a')
+    csv.write('tiempo, idMontacargas, nodosActuales, paquetesTrasladados, distanciaRecorrida, pesoLevantado\n')
+    csv.close()
+    tiempo = []
+    idMontacargas = []
+    nodosActuales=[]
+    paquetesTrasladados=[]
+    distanciaRecorrida=[]
+    pesoLevantado=[]
     while True:
         keys = pygame.key.get_pressed()  # Checking pressed keys
         for event in pygame.event.get():
@@ -626,6 +638,9 @@ def Simulacion(Options):
         checkCollisions()
         checkLifterInWeighingScale()
         checkLifterInMachinery()
+
+
+
         pygame.display.flip()
         pygame.time.wait(5)
 
