@@ -40,11 +40,8 @@ class Lifter:
         self.max_evasive_time = 50.0
         self.wait_time = 100.0
         self.max_wait_time = 100.0
-        # Se inicializa una posicion aleatoria en el tablero
-        # self.Position = [random.randint(-dim, dim), 6, random.randint(-dim, dim)]
         self.Position = position
-        # Inicializar las coordenadas (x,y,z) del cubo en el tablero
-        # almacenandolas en el vector Position
+        self.distance_traveled = 0.0 
 
         # Se inicializa un vector de direccion aleatorio
         self.Direction = numpy.zeros(3);
@@ -151,14 +148,17 @@ class Lifter:
             self.wait_time = self.max_wait_time
             self.evasive_time = self.max_evasive_time
             self.vel = self.max_vel
-
+        
+        self.distance_traveled += Distancia
 
         # print(" Agent : %d \t State: %s \t Position : [%0.2f, 0 %0.2f] " %(self.idx, self.status, self.Position[0], self.Position[-1]) );
 
         if Distancia < 1:
             self.currentNode = self.nextNode
 
-        mssg = "Agent:%d \t State:%s \t Position:[%0.2f,0,%0.2f] \t NodoActual:%d \t NodoSiguiente:%d" %(self.idx, self.status, self.Position[0], self.Position[-1], self.currentNode, self.nextNode); 
+        mssg = "Agent:%d \t State:%s \t Position:[%0.2f,0,%0.2f] \t NodoActual:%d \t NodoSiguiente:%d \t DistanceTraveled:%0.2f" % (
+            self.idx, self.status, self.Position[0], self.Position[-1], self.currentNode, self.nextNode, self.distance_traveled)
+
         print(mssg);
 
         match self.status:
