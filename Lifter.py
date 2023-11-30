@@ -38,8 +38,8 @@ class Lifter:
         self.other_lifters = other_lifters
         self.evasive_time = 50.0
         self.max_evasive_time = 50.0
-        self.wait_time = 100.0
-        self.max_wait_time = 100.0
+        self.wait_time = 75.0
+        self.max_wait_time = 75.0
         self.Position = position
         self.distance_traveled = 0.0 
 
@@ -69,8 +69,6 @@ class Lifter:
         self.trashID = -1
 
     def maniobraEvasiva(self):
-        min_idx_lifter = min(self.idx, *[other_lifter.idx for other_lifter in self.other_lifters])
-        
         for other_lifter in self.other_lifters:
             if other_lifter.idx != self.idx:
                 # Calcular la distancia entre este montacargas y el otro montacargas
@@ -88,8 +86,8 @@ class Lifter:
                     # Normalizar la nueva dirección para asegurar una magnitud adecuada
                     direccion_evasiva /= numpy.linalg.norm(direccion_evasiva)
 
-                    # Si este montacargas tiene el índice más bajo, disminuir la velocidad
-                    if self.idx == min_idx_lifter:
+                    # Disminuir la velocidad solo si este montacargas tiene un índice mayor
+                    if self.idx > other_lifter.idx:
                         self.vel = self.vel * 0.8  # Disminuir la velocidad en un 20%
 
                     # Actualizar la dirección del montacargas para evitar la colisión
