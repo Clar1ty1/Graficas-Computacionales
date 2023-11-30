@@ -122,6 +122,7 @@ def checkCollisions():
                     bolsas.pop()
                     c.status = "lifting"
                     c.liftBolsa(b)
+                    return
 
 def checkLifterInWeighingScale():
     for c in lifters:
@@ -595,8 +596,15 @@ def Simulacion(Options):
     cleanFile = open('Report.csv', 'w')
     cleanFile.close()
     csv = open('Report.csv', 'a')
-    csv.write('tiempo, idMontacargas, nodosActuales, paquetesTrasladados, distanciaRecorrida, pesoLevantado\n')
+    csv.write('tiempo,idMontacargas,nodosActuales,paquetesTrasladados,distanciaRecorrida,pesoLevantado\n')
     csv.close()
+
+    cleanFile2 = open('Report2.csv', 'w')
+    cleanFile2.close()
+    csv2 = open('Report2.csv', 'a')
+    csv2.write('tiempo,idPaquete,nodo\n')
+    csv2.close()
+    bolsaId = 0
     tiempo = []
     idMontacargas = []
     nodosActuales=[]
@@ -631,7 +639,7 @@ def Simulacion(Options):
         display()
         probability = 0.0015
         if numpy.random.rand(1)[0] < probability:
-            bolsa = Bolsa([-260, 4, 233], textures, 1)
+            bolsa = Bolsa([-260, 4, 233], textures, 1, 0)
             bolsas.append(bolsa)
         for bolsa in bolsas:
             bolsa.draw()

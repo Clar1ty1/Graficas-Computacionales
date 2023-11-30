@@ -11,10 +11,10 @@ import math
 
 
 class Bolsa:
-    def __init__(self, position, textures, txtIndex):
+    def __init__(self, position, textures, txtIndex, id):
 
         self.Position = position
-        
+        self.id = id
         #Arreglo de texturas
         self.textures = textures
 

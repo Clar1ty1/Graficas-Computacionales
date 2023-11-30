@@ -1,4 +1,4 @@
-import pygame, random, math, numpy, yaml, time
+import pygame, random, math, numpy, yaml, time, uuid
 from pygame.locals import *
 from Cubo import Cubo
 from OpenGL.GL import *
@@ -38,14 +38,11 @@ class Lifter:
         self.other_lifters = other_lifters
         self.evasive_time = 50.0
         self.max_evasive_time = 50.0
-        self.wait_time = 100.0
-        self.max_wait_time = 100.0
+        self.wait_time = 75.0
+        self.max_wait_time = 75.0
         self.startTime = startTime
-        # Se inicializa una posicion aleatoria en el tablero
-        # self.Position = [random.randint(-dim, dim), 6, random.randint(-dim, dim)]
         self.Position = position
-        # Inicializar las coordenadas (x,y,z) del cubo en el tablero
-        # almacenandolas en el vector Position
+        self.distance_traveled = 0.0 
         self.totalDistance = 0
         # Se inicializa un vector de direccion aleatorio
         self.Direction = numpy.zeros(3);
@@ -65,7 +62,7 @@ class Lifter:
         self.platformHeight = -1.5
         self.platformUp = False
         self.platformDown = False
-        self.weighingTime = 10
+        self.weighingTime = 5
         #Control variable for collisions
         self.radiusCol = 10
 
@@ -83,7 +80,7 @@ class Lifter:
                 # Calcular la distancia entre este montacargas y el otro montacargas
                 distancia = math.sqrt( math.pow(other_lifter.Position[0] - self.Position[0], 2) + math.pow(other_lifter.Position[2] - self.Position[2], 2) )
                 # Definir una distancia de seguridad (ajusta este valor según sea necesario)
-                distancia_seguridad = 20.0
+                distancia_seguridad = 15.0
                 #print(f"Distancia entre {self.Position} y {other_lifter.Position}: {distancia}")
                 if distancia < distancia_seguridad:
                     # Calcular el vector entre los montacargas
@@ -95,10 +92,10 @@ class Lifter:
                     # Normalizar la nueva dirección para asegurar una magnitud adecuada
                     direccion_evasiva = direccion_evasiva.astype(float) / numpy.linalg.norm(direccion_evasiva).astype(float)
 
-                    # Si este montacargas tiene el índice más bajo, disminuir la velocidad
-                    if self.idx == min_idx_lifter:
-                        self.vel = self.vel * 0.5  # Disminuir la velocidad en un 20%
-
+                    # Disminuir la velocidad solo si este montacargas tiene un índice mayor
+                    if self.idx < other_lifter.idx:
+                        self.vel = self.vel * 0.1  # Disminuir la velocidad en un 20%
+                        direccion_evasiva = -1 * self.Direction
                     # Actualizar la dirección del montacargas para evitar la colisión
                     return direccion_evasiva
                 else:
@@ -122,7 +119,11 @@ class Lifter:
      
     def liftBolsa(self, bolsa):
         self.bolsa = bolsa
+        bolsa.id = uuid.uuid4()
     def dropBolsa(self):
+        csv2 = open('Report2.csv', 'a')
+        csv2.write(f"{time.time()-self.startTime},{self.bolsa.id},{self.currentNode + 1}\n")
+        csv2.close()
         bolsaTemp = self.bolsa
         self.bolsa = None
         self.numberOfPackages += 1
@@ -163,17 +164,24 @@ class Lifter:
             self.wait_time = self.max_wait_time
             self.evasive_time = self.max_evasive_time
             self.vel = self.max_vel
-
+        
+        self.distance_traveled += Distancia
 
         # print(" Agent : %d \t State: %s \t Position : [%0.2f, 0 %0.2f] " %(self.idx, self.status, self.Position[0], self.Position[-1]) );
 
         if Distancia < 1:
             self.currentNode = self.nextNode
+
+            if self.bolsa != None:
+                csv2 = open('Report2.csv', 'a')
+                csv2.write(f"{time.time()-self.startTime},{self.bolsa.id},{self.currentNode}\n")
+                csv2.close()
+
             csv = open('Report.csv', 'a')
             csv.write(f"{time.time()-self.startTime},{self.idx},{self.currentNode},{self.numberOfPackages},{self.totalDistance},{self.currentWeight}\n")
             csv.close()
         mssg = "Agent:%d \t State:%s \t Position:[%0.2f,0,%0.2f] \t NodoActual:%d \t NodoSiguiente:%d" %(self.idx, self.status, self.Position[0], self.Position[-1], self.currentNode, self.nextNode); 
-        print(mssg);
+        #print(mssg);
 
         match self.status:
             case "searching":
@@ -222,6 +230,8 @@ class Lifter:
             case "dropping":
                 if self.platformHeight <= -1.5:
                     self.status = "searching"
+
+                    self.bolsa = None   
                 else:
                     self.platformHeight -= delta
 
