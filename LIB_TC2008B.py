@@ -82,7 +82,7 @@ def Init(Options):
     
     for i in range(0, Options.lifters):
         # i es el identificator del agente
-        lifters.append(Lifter(Settings.DimBoard, 0.7, textures, i,  0))
+        lifters.append(Lifter(Settings.DimBoard, 0.7, textures, i,  0, lifters))
     
 
 

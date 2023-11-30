@@ -35,9 +35,13 @@ class Lifter:
     cargoArea = [-260, 233]
     weighingScale = [22, 142]
     machineZone = [48, -88]
-    def __init__(self, dim, vel, textures, idx, currentNode):
+    def __init__(self, dim, vel, textures, idx, currentNode, other_lifters):
         self.dim = dim
         self.idx = idx
+        self.other_lifters = other_lifters
+        self.evasive_time = 5.0
+        # Se inicializa una posicion aleatoria en el tablero
+        # self.Position = [random.randint(-dim, dim), 6, random.randint(-dim, dim)]
         self.Position = [-255 - idx*20, 2, 238+idx*20]
         
         self.Direction = numpy.zeros(3);
@@ -61,6 +65,43 @@ class Lifter:
         self.status = "searching"
         self.trashID = -1
 
+    def maniobraEvasiva(self):
+        for other_lifter in self.other_lifters:
+            if other_lifter.idx != self.idx:
+                # Calcular la distancia entre este montacargas y el otro montacargas
+                distancia = numpy.linalg.norm(numpy.array(self.Position) - numpy.array(other_lifter.Position))
+                # Definir una distancia de seguridad (ajusta este valor según sea necesario)
+                distancia_seguridad = 10.0
+
+                if distancia < distancia_seguridad:
+                    # Calcular el vector entre los montacargas
+                    vector_entre_montacargas = numpy.array(other_lifter.Position) - numpy.array(self.Position)
+
+                    # Calcular el vector perpendicular rotando 90 grados en sentido horario (en el plano XZ)
+                    direccion_evasiva = numpy.array([-vector_entre_montacargas[2], 0, vector_entre_montacargas[0]])
+
+                    # Normalizar la nueva dirección para asegurar una magnitud adecuada
+                    direccion_evasiva /= numpy.linalg.norm(direccion_evasiva)
+
+                    # Actualizar la dirección del montacargas para evitar la colisión
+                    return direccion_evasiva
+                else:
+                    return None
+
+    def search(self):
+        # Change direction randomly
+        u = numpy.random.rand(3);
+        u[1] = 0;
+        u /= numpy.linalg.norm(u);
+        self.Direction = u;
+
+    def targetCenter(self):
+        # Set direction to center
+        dirX = -self.Position[0]
+        dirZ = -self.Position[2]
+        magnitude = math.sqrt(dirX**2 + dirZ**2)
+        self.Direction = [(dirX / magnitude), 4, (dirZ / magnitude)]
+     
     def liftBolsa(self, bolsa):
         self.bolsa = bolsa
     def dropBolsa(self):
@@ -85,6 +126,16 @@ class Lifter:
         self.nextNode = self.RetrieveNextNode(self.currentNode);
 		
         Direccion, Distancia =  self.ComputeDirection(self.Position, self.nextNode);
+
+        nueva_direccion = self.maniobraEvasiva()
+        if nueva_direccion is not None:
+            # Normalizar la nueva dirección para asegurar una magnitud adecuada
+            Direccion = nueva_direccion
+
+        # print(" Agent : %d \t State: %s \t Position : [%0.2f, 0 %0.2f] " %(self.idx, self.status, self.Position[0], self.Position[-1]) );
+
+        if Distancia < 1:
+            self.currentNode = self.nextNode
 
         mssg = "Agent:%d \t State:%s \t Position:[%0.2f,0,%0.2f] \t NodoActual:%d \t NodoSiguiente:%d" %(self.idx, self.status, self.Position[0], self.Position[-1], self.currentNode, self.nextNode); 
         print(mssg);
