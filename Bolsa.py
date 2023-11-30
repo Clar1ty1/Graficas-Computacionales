@@ -31,7 +31,7 @@ class Bolsa:
         if self.alive:
             glPushMatrix()
             glTranslatef(self.Position[0], self.Position[1], self.Position[2])
-            glScaled(5, 5, 5)
+            glScaled(8, 8, 8)
             glColor3f(1.0, 1.0, 1.0)
 
             glEnable(GL_TEXTURE_2D)

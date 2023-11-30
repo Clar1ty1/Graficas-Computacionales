@@ -2,6 +2,8 @@ import yaml, pygame, random, glob, math, numpy
 from Lifter import Lifter
 from Bolsa import Bolsa
 from Edificio import Edificio
+from Bascula import Bascula
+from Maquinaria import Maquinaria
 
 from pygame.locals import *
 from OpenGL.GL import *
@@ -67,6 +69,7 @@ def Init(Options):
     glEnable(GL_DEPTH_TEST)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
+
     
     for File in glob.glob(Settings.Materials + "*.*"):
         Texturas(File)
@@ -77,9 +80,9 @@ def Init(Options):
         [-220,4,260]
     ]    
     
-    for i, p in enumerate(Positions):
+    for i in range(0, Options.lifters):
         # i es el identificator del agente
-        lifters.append(Lifter(Settings.DimBoard, 0.7, textures, i, p, 0))
+        lifters.append(Lifter(Settings.DimBoard, 0.7, textures, i,  0))
     
 
 
@@ -115,10 +118,30 @@ def checkCollisions():
             if distance <= c.radiusCol:
                 if c.status == "searching" and b.alive:
                     bolsas.pop()
-                    c.status = "searching"
+                    c.status = "lifting"
+                    c.liftBolsa(b)
+
+def checkLifterInWeighingScale():
+    for c in lifters:
+        distance = math.sqrt(math.pow((weighingScale.Position[0] - c.Position[0]), 2) + math.pow((weighingScale.Position[2] - c.Position[2]), 2))
+        if distance <= c.radiusCol:
+            #print("Collition")
+            if c.status == "delivering" and c.weighingTime > 0:
+                c.status = "weighing"
+        #print(f"weighingScale {weighingScale.Position} lifters {c.Position} distance {distance}") 
+def checkLifterInMachinery():
+    for c in lifters:
+        distance = math.sqrt(math.pow((maquinaria.Position[0] - c.Position[0]), 2) + math.pow((maquinaria.Position[2] - c.Position[2]), 2))
+        if distance <= c.radiusCol:
+         #   print("Collition")
+            if c.status == "delivering":
+                c.status = "dropping"
+                maquinaria.addBolsa(c.dropBolsa())
+        #print(f"maquinaria {maquinaria.Position} lifters {c.Position} distance {distance}") 
+    
 
 def display():
-    global lifters, bolsas, delta
+    global lifters, bolsas, delta, weighingScale, maquinaria
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     
     #Draw the lifters
@@ -126,40 +149,45 @@ def display():
         lifter.draw()
         lifter.update(delta)
 
+    glColor3f(1,1,1)
     #Draw the map
     planoText()
+    glDisable(GL_TEXTURE_2D)
+    weighingScale = Bascula([20, 2, 139])
+    maquinaria = Maquinaria([47, 2, -85])
+
     txtIndex = 0
     if os.name == "posix":
         txtIndex = 9
     else:
         txtIndex = 6
-    maquinaria = Edificio(textures = textures, position=[10,2,-22], scale=5, txtIndex=txtIndex)
+    maquinariaBuilding = Edificio(textures = textures, position=[10,2,-22], scale=5, txtIndex=txtIndex)
 
      #Right face 
-    maquinaria.setFace1Width(3.6)
-    maquinaria.setFace1Heigth(5)
-    maquinaria.setFace1DistanceFromOrigin(9)
+    maquinariaBuilding.setFace1Width(3.6)
+    maquinariaBuilding.setFace1Heigth(5)
+    maquinariaBuilding.setFace1DistanceFromOrigin(9)
     # Front face
-    maquinaria.setFace2Width(9)
-    maquinaria.setFace2Heigth(5)
-    maquinaria.setFace2DistanceFromOrigin(3.6)
+    maquinariaBuilding.setFace2Width(9)
+    maquinariaBuilding.setFace2Heigth(5)
+    maquinariaBuilding.setFace2DistanceFromOrigin(3.6)
 
     # Left face
-    maquinaria.setFace3Width(3.6)
-    maquinaria.setFace3Heigth(5)
-    maquinaria.setFace3DistanceFromOrigin(9)
+    maquinariaBuilding.setFace3Width(3.6)
+    maquinariaBuilding.setFace3Heigth(5)
+    maquinariaBuilding.setFace3DistanceFromOrigin(9)
 
     # Back face
-    maquinaria.setFace4Width(9)
-    maquinaria.setFace4Heigth(5)
-    maquinaria.setFace4DistanceFromOrigin(3.6)
+    maquinariaBuilding.setFace4Width(9)
+    maquinariaBuilding.setFace4Heigth(5)
+    maquinariaBuilding.setFace4DistanceFromOrigin(3.6)
 
     # Top Face
-    maquinaria.setFace5Width(9)
-    maquinaria.setFace5Heigth(3.6)
-    maquinaria.setFace5DistanceFromOrigin(5)
+    maquinariaBuilding.setFace5Width(9)
+    maquinariaBuilding.setFace5Heigth(3.6)
+    maquinariaBuilding.setFace5DistanceFromOrigin(5)
 
-    maquinaria.draw()
+    maquinariaBuilding.draw()
 
     if os.name == "posix":
         txtIndex = 11
@@ -596,7 +624,8 @@ def Simulacion(Options):
         for bolsa in bolsas:
             bolsa.draw()
         checkCollisions()
-        print(len(bolsas))
+        checkLifterInWeighingScale()
+        checkLifterInMachinery()
         pygame.display.flip()
         pygame.time.wait(5)
 

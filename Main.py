@@ -11,9 +11,9 @@ def main():
 	subparser = subparsers.add_parser("Simulacion",  description = "Corre simulacion");
 	subparser.add_argument("--lifters", required = True, type = int, help = "Numero de montacargas");
 	#subparser.add_argument("--Basuras", required = True, type = int, help = "Numero de basuras");			
-	subparser.add_argument("--Delta", required = False, type = float, default = 0.05, help = "Velocidad de simulacion");
+	subparser.add_argument("--Delta", required = False, type = float, default = 0.01, help = "Velocidad de simulacion");
 	subparser.add_argument("--theta", required = False, type = float, default = 0, help = "");	
-	subparser.add_argument("--radious", required = False, type = float, default = 30, help = "");
+	subparser.add_argument("--radious", required = False, type = float, default = 40, help = "");
 	subparser.set_defaults(func = LIB_TC2008B.Simulacion);
 
 	Options = parser.parse_args();

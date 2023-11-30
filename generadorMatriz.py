@@ -45,7 +45,7 @@ def click_event(event, x, y, flags, params):
         print("Nodo:", x_plano, y_plano)
 
         nodes.append((x_plano, y_plano))
-        cv2.circle(img, (x, y), 10, (255, 255, 255), -1)
+        cv2.circle(img, (x, y), 5, (0, 0, 0), -1)
         cv2.imshow('image', img)
     pass
 
