@@ -79,7 +79,7 @@ def Init(Options):
     
     for i, p in enumerate(Positions):
         # i es el identificator del agente
-        lifters.append(Lifter(Settings.DimBoard, 0.7, textures, i, p, 0))
+        lifters.append(Lifter(Settings.DimBoard, 0.7, textures, i, p, 0, lifters))
     
 
 
